@@ -1,0 +1,15 @@
+{% extends "base/base.html" %}
+{% block titulo %}Asignacion Beneficio{% endblock %}
+{% block contenido %}
+    <h1>Asignación de Beneficio</h1>
+    <form method="POST">{% csrf_token %}
+        {% for field in form %}
+            <div class="campo">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            </div><br>
+        {% endfor %}
+    
+    <input type="submit" value="Asignar">
+    </form>
+{% endblock %}

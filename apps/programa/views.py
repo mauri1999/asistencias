@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
-from .forms import ProgramaForm
-from .models import Programa
+from .forms import ProgramaForm, AsignacionBeneficioForm
+from .models import Programa, AsignacionBeneficio
 
 
 def programa_lista(request):
@@ -60,3 +60,38 @@ def programa_edit(request, pk):
         form_programa = ProgramaForm(instance=programa)
 
     return render(request, 'programa/programa_edit.html', {'form': form_programa})
+
+#Generar una vista y templates correspondientes para realizar la asignación del beneficio a la persona.
+
+def asignar_beneficio(request):
+    nuevo_beneficio = None
+    if request.method == 'POST':
+        nuevo_beneficio = AsignacionBeneficioForm(request.POST)
+        if nuevo_beneficio.is_valid():
+            # Se guardan los datos que provienen del formulario en la B.D.
+            beneficio = nuevo_beneficio.save(commit=True)
+            messages.success(request,'Beneficio asignado con éxito'.format(beneficio))
+            return redirect('home')
+    else:
+        nuevo_beneficio = AsignacionBeneficioForm()
+
+    return render(request, 'asignacionBeneficio.html', {'form': nuevo_beneficio})
+
+#Generar una vista y templates para mostrar un listado de los beneficios asignados para un Programa 
+# y rango de fechas en particular.
+
+def buscar_beneficios(request, pk):
+    programa = get_object_or_404(Programa, pk=pk)
+
+    return render(request, 'buscarBeneficios.html',{'programa': programa})    
+
+def lista_beneficios(request,pk):
+    programa = get_object_or_404(Programa, pk=pk)
+    beneficios = None
+    fecha_inicio=None
+    if request.method == 'POST':
+            fecha_inicio = request.POST['fecha_inicio']
+            fecha_fin = request.POST['fecha_fin']
+            #ahora buscamos fechas
+            beneficios = AsignacionBeneficio.objects.filter(programa_id = programa.id).filter(fecha_entrega__gte = fecha_inicio).filter(fecha_entrega__lte=fecha_fin)
+    return render(request, 'listaBeneficios.html', {'programa':programa,'beneficios': beneficios})

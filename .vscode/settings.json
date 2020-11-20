@@ -1,0 +1,7 @@
+{
+    "python.linting.enabled": false,
+    "python.pythonPath": "C:\\anaconda\\envs\\parcial\\python.exe",
+    "python.autoComplete.extraPaths": [
+        "C:/Users/Angélica/Desktop/PARCIAL_PROG3/asistencias"
+    ]
+}
